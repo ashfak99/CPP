@@ -2,6 +2,8 @@
 #include<vector>
 using namespace std;
 
+int ans = 0;
+
 class Node
 {
 public:
@@ -95,6 +97,39 @@ int sumOfNodes(Node* root)
     return leftSum+rightSum+root->data;
 }
 
+int height(Node* root)
+{
+    if (root==NULL)
+    {
+        return 0;
+    }
+    
+    int leftHt = height(root->left);
+    int rightHt = height(root->right);
+
+    ans=max(ans , leftHt+rightHt);
+
+    return max(leftHt,rightHt)+1;
+}
+
+int countOfNodes(Node* root)
+{
+    if (root==NULL)
+    {
+        return 0;
+    }
+    int leftCount = countOfNodes(root->left);
+    int rightCount = countOfNodes(root->right);
+
+    return leftCount+rightCount+1;
+}
+
+int diameterOfNode(Node* root)
+{
+    height(root);
+    return ans;
+}
+
 int main()
 {
     vector<int> preorder = {1,2,-1,-1,3,4,-1,-1,5,-1,-1};
@@ -105,7 +140,9 @@ int main()
     //     cout<<i<<" ";
     // }
 
-    cout<<sumOfNodes(root);
+    cout<<height(root)<<endl;
+    cout<<countOfNodes(root)<<endl;
+    cout<<diameterOfNode(root)<<endl;
     
     return 0;
 }
