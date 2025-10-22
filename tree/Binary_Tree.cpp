@@ -1,5 +1,8 @@
 #include<iostream>
 #include<vector>
+#include<queue>
+#include<map>
+
 using namespace std;
 
 int ans = 0;
@@ -130,19 +133,46 @@ int diameterOfNode(Node* root)
     return ans;
 }
 
+void topView(Node* root)
+{
+    queue<pair<Node*,int>> q;
+    map<int,int> m;
+
+    q.push({root,0});
+
+    while (q.size()>0)
+    {
+        Node* curr = q.front().first;
+        int currHD = q.front().second;
+        q.pop();
+
+        if (m.find(currHD)==m.end())
+        {
+            m[currHD]=curr->data;
+        }
+        
+        if (curr->left!=NULL)
+        {
+            q.push({curr->left,currHD-1});
+        }
+        
+        if (curr->right!=NULL)
+        {
+            q.push({curr->right,currHD+1});
+        }
+    }
+    
+    for (auto it : m)
+    {
+        cout<<it.second<<" ";
+    }
+    cout<<endl;
+}
+
 int main()
 {
     vector<int> preorder = {1,2,-1,-1,3,4,-1,-1,5,-1,-1};
     Node* root = buildTree(preorder);
-    // vector<int> result = inorderVector(root);
-    // for ( int i : result)
-    // {
-    //     cout<<i<<" ";
-    // }
-
-    cout<<height(root)<<endl;
-    cout<<countOfNodes(root)<<endl;
-    cout<<diameterOfNode(root)<<endl;
-    
+    topView(root);
     return 0;
 }
