@@ -169,10 +169,24 @@ void topView(Node* root)
     cout<<endl;
 }
 
+void kthLevelTree(Node* root , int k)
+{
+    if (root==NULL) return;
+
+    if (k==1)
+    {
+        cout<<root->data<<" ";
+        return;
+    }
+    kthLevelTree(root->left,k-1);
+    kthLevelTree(root->right,k-1);
+    
+}
+
 int main()
 {
-    vector<int> preorder = {1,2,-1,-1,3,4,-1,-1,5,-1,-1};
+    vector<int> preorder = {1,2,7,-1,-1,-1,3,4,-1,-1,5,-1,-1};
     Node* root = buildTree(preorder);
-    topView(root);
+    kthLevelTree(root,3);
     return 0;
 }
