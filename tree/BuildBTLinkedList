@@ -1,0 +1,290 @@
+#ifndef BTLinkedList
+#define BTLinkedList
+
+#include<bits/stdc++.h>
+using namespace std;
+
+class TreeNode{
+
+public:
+
+        int DATA;
+        TreeNode* leftChild;
+        TreeNode* rightChild;
+
+        TreeNode()
+        {
+            leftChild=nullptr;
+            rightChild=nullptr;
+            DATA=0;
+        }
+
+        TreeNode( int item)
+        {
+            DATA=item;
+            leftChild=nullptr;
+            rightChild=nullptr;
+        }
+};
+
+class BuildBTLinkedList : TreeNode
+{
+private:
+    char option;
+    int val;
+    TreeNode *root;
+
+    void BuildTree(TreeNode* ptr)
+    {
+        if (ptr!=nullptr)
+        {   
+            int data=ptr->DATA;
+
+            cout<<"Node "<<data<<" has left child (Option:Y/N) : ";
+            cin>>option;
+
+            if(option=='Y' || option=='y')
+            {
+                cout<<"\nPlease enter the data : ";
+                cin>>val;
+
+                TreeNode *lcptr=new TreeNode(val);
+                ptr->leftChild=lcptr;
+                BuildTree(lcptr);
+            }
+            
+            cout<<"Node "<<data<<" has right child (Option:Y/N) : ";
+            cin>>option;
+
+            if(option=='Y' || option=='y')
+            {
+                cout<<"Please enter the data : ";
+                cin>>val;
+
+                TreeNode *rcptr=new TreeNode(val);
+                ptr->rightChild=rcptr;
+                BuildTree(rcptr);
+            }
+        }
+    }
+
+    void PreOrder(TreeNode *ptr)
+    {
+        if(ptr!=nullptr)
+        {
+            cout<<ptr->DATA<<"\t";
+            PreOrder(ptr->leftChild);
+            PreOrder(ptr->rightChild);
+        }
+    }
+
+    void InOrder(TreeNode *ptr)
+    {
+        if(ptr!=nullptr)
+        {
+            InOrder(ptr->leftChild);
+            cout<<ptr->DATA<<"\t";
+            InOrder(ptr->rightChild);
+        }
+    }
+
+    void PostOrder(TreeNode *ptr)
+    {
+        if(ptr!=nullptr)
+        {
+            PostOrder(ptr->leftChild);
+            PostOrder(ptr->rightChild);
+            cout<<ptr->DATA<<"\t";
+        }
+    }
+
+    TreeNode* SearchLink(TreeNode* root, int key)
+    {
+        if(root==nullptr) return nullptr;
+
+        if(root->DATA==key) return root;
+
+        TreeNode* leftLink = SearchLink(root->leftChild,key);
+        if(leftLink!=nullptr) return leftLink;
+
+        return SearchLink(root->rightChild,key);
+    }
+
+    TreeNode* SearchParent(TreeNode* root, int key)
+    {
+        if(root==nullptr) return nullptr;
+
+        if(root->DATA==key) return nullptr;
+        
+        if(root->leftChild!=nullptr && root->leftChild->DATA==key) return root;
+
+        if(root->rightChild!=nullptr && root->rightChild->DATA==key) return root;
+
+        TreeNode* leftSearch=SearchParent(root->leftChild,key);
+        if (leftSearch!=nullptr) return leftSearch;
+
+        return SearchParent(root->rightChild,key);
+        
+    }
+public:
+    BuildBTLinkedList()
+    {
+        root=nullptr;
+    }
+
+    void buildTree()
+    {
+        cout<<"Please Enter the data of root : ";
+        cin>>val;
+
+        root=new TreeNode(val);
+        BuildTree(root);
+    }
+
+    void preOrderTraversal()
+    {
+        if(root==nullptr)
+        {
+            cout<<"Tree is empty";
+            return;
+        }
+        cout<<"\n\tPre-Order : ";
+        PreOrder(root);
+        cout<<endl;
+    }
+
+    void inOrderTraversal()
+    {
+        if(root==nullptr)
+        {
+            cout<<"Tree is empty";
+            return;
+        }
+        cout<<"\n\tIn-Order : ";
+        InOrder(root); 
+        cout<<endl;
+    }
+
+    void postOrderTraversal()
+    {
+        if(root==nullptr)
+        {
+            cout<<"Tree is empty";
+            return;
+        }
+        cout<<"\n\tPost-Order : ";
+        PostOrder(root);
+        cout<<endl;
+    }
+
+    void insertBinaryTreeElement()
+{
+    int key;
+    cout << "Enter the key node data : ";
+    cin >> key;
+
+    TreeNode* ptr = SearchLink(root, key);
+
+    
+    if (ptr == nullptr)
+    {
+        cout << "Search Unsuccessful - Key not found" << endl;
+        return; 
+    }
+
+    
+    if (ptr->leftChild != nullptr && ptr->rightChild != nullptr)
+    {
+        cout << "Insertion not possible. Node " << key << " already has both Left and Right children." << endl;
+        return;
+    }
+
+    char option;
+    int val;
+
+    cout << "Insert as Left or Right Child (Option : L/R) : ";
+    cin >> option;
+
+    if (option == 'L' || option == 'l')
+    {
+        if (ptr->leftChild == nullptr)
+        {
+            cout << "Enter the item : ";
+            cin >> val;
+            TreeNode* newN = new TreeNode(val);
+            ptr->leftChild = newN;
+            cout << "Inserted " << val << " as Left Child of " << key << endl;
+        }
+        else {
+            cout << "Insertion not possible as left child (Already exists)" << endl;
+        }
+    }
+    else if (option == 'R' || option == 'r') // Explicit check for R
+    {
+        if (ptr->rightChild == nullptr)
+        {
+            cout << "Enter the item : ";
+            cin >> val;
+            TreeNode* newN = new TreeNode(val);
+            ptr->rightChild = newN;
+            cout << "Inserted " << val << " as Right Child of " << key << endl;
+        }
+        else {
+            cout << "Insertion not possible as right child (Already exists)" << endl;
+        }
+    }
+    else {
+        cout << "Invalid Option selected (Choose L or R)" << endl;
+    }
+}
+
+    void deleteBinaryTreeElement()
+   {
+        if (root == nullptr) {
+            cout << "Tree is empty" << endl;
+            return;
+        }
+
+        int val;
+        cout << "Enter the node value you want to delete : ";
+        cin >> val;
+
+        if (root->DATA == val) {
+            if (root->leftChild == nullptr && root->rightChild == nullptr) {
+                delete root;
+                root = nullptr;
+                cout << "Node deleted" << endl;
+            } else {
+                cout << "Node is not a leaf node" << endl;
+            }
+            return;
+        }
+
+        TreeNode* parent = SearchParent(root, val);
+
+        if (parent != nullptr) {
+            if (parent->leftChild != nullptr && parent->leftChild->DATA == val) {
+                if (parent->leftChild->leftChild == nullptr && parent->leftChild->rightChild == nullptr) {
+                    delete parent->leftChild;
+                    parent->leftChild = nullptr;
+                    cout << "Node deleted" << endl;
+                } else {
+                    cout << "Node is not a leaf node" << endl;
+                }
+            }
+            else if (parent->rightChild != nullptr && parent->rightChild->DATA == val) {
+                if (parent->rightChild->leftChild == nullptr && parent->rightChild->rightChild == nullptr) {
+                    delete parent->rightChild;
+                    parent->rightChild = nullptr;
+                    cout << "Node deleted" << endl;
+                } else {
+                    cout << "Node is not a leaf node" << endl;
+                }
+            }
+        } else {
+            cout << "Node does not exist" << endl;
+        }
+    }
+};
+
+#endif

@@ -1,0 +1,320 @@
+#ifndef BTARRAY
+#define BTARRAY
+
+#include<bits/stdc++.h>
+using namespace std;
+
+class Stack
+{
+    protected:
+        vector<int> item;
+        int top;
+
+        Stack()
+        {
+            top=-1;
+            item.resize(10);
+        }
+
+        void push(int val)
+        {
+            top++;
+            if(top>=item.size())
+            {
+                item.resize(top+1);
+            }
+            item[top]=val;
+        }
+
+        int pop()
+        {
+            if(top==-1)
+            {
+                return -1;
+            }
+            int val=item[top];
+            top--;
+            return val;
+        }
+
+        int isEmpty()
+        {
+            if(top==-1){ return true;}
+            else {return false;}
+        }
+};
+
+class BinaryTreeArray : Stack
+{
+
+private:
+    vector<int> element;
+
+    void PreOrderTraverse(int i)
+    {
+        if(i>=element.size() || element[i]==-1) return;
+        cout<<element[i]<<"\t";
+        PreOrderTraverse(2*i);
+        PreOrderTraverse(2*i+1);
+    }
+
+    void InOrderTraverse(int i)
+    {
+        if(i>=element.size() || element[i]==-1) return;
+        InOrderTraverse(2*i);
+        cout<<element[i]<<"\t";
+        InOrderTraverse(2*i+1);
+    }
+
+    void PostOrderTraverse(int i)
+    {
+        if(i>=element.size() || element[i]==-1) return;
+        PostOrderTraverse(2*i);
+        PostOrderTraverse(2*i+1);
+        cout<<element[i]<<"\t";
+    }
+
+    int SearchSEQ(int index, int key)
+    {
+        int i=index;
+
+        if(i>=element.size() || element[i]==-1)
+        {
+            return 0;
+        }
+
+        if(element[i]==key)
+        {
+            return i;
+        }
+
+        int leftSS=SearchSEQ(2*i,key);
+
+        if(leftSS!=0)
+        {
+            return leftSS;
+        }
+
+        int rightSS=SearchSEQ(2*i+1,key);
+
+        if(rightSS!=0)
+        {
+            return rightSS;
+        }
+
+        return 0;
+    }
+
+    void PreOrderIterative(int i)
+    {
+        if(i>element.size() || element[i]==-1) return;
+
+        push(i);
+        while (top!=-1)
+        {
+            int ptr=pop();
+            if(ptr!=-1 && ptr<item.size())
+            {
+                cout<<element[ptr]<<"\t";
+
+                int RightChild=2*ptr+1;
+
+                if(RightChild<element.size() && element[RightChild]!=-1)
+                {
+                    push(RightChild);
+                }
+
+                int LeftChild=2*ptr;
+
+                if(LeftChild<element.size() && element[LeftChild]!=-1)
+                {
+                    push(LeftChild);
+                }
+            }
+        }
+        
+    }
+public:
+
+    BinaryTreeArray()
+    {
+        element.resize(100,-1);
+    }
+
+    void StartBuilding()
+    {
+        element.clear();
+        element.resize(100,-1);
+        int data;
+        cout<<"Please Enter the data of ROOT NODE: ";
+        cin>>data;
+
+        BuildTree(1,data);
+    }
+
+    void BuildTree(int i, int item)
+    {
+        if(i>=element.size()){
+            element.resize(i+1,-1);
+        }
+
+        char option;
+        int val;
+
+        element[i]=item;
+
+        cout<<"Node "<<item<<" has a left sub tree? (Option=Y/N) : ";
+        cin>>option;
+
+        if (option=='Y' || option=='y')
+        {
+            cout<<"Enter the data : ";
+            cin>> val;
+            BuildTree(2*i,val);
+        }
+
+        cout<<"Node "<<item<<" has a right sub tree? (Option=Y/N) : ";
+        cin>>option;
+        
+        if (option=='Y' || option=='y')
+        {
+            cout<<"Enter the data : ";
+            cin>> val;
+            BuildTree(2*i+1,val);
+        }
+    }
+
+
+    void preOrder()
+    {
+        if (element.empty() || element[1] == -1) 
+        {
+            cout << "Tree is empty" << endl;
+            return;
+        }
+        cout<<"\n\t Pre-Order : ";
+        PreOrderTraverse(1);
+        cout<<endl;
+    }
+
+    void inOrder()
+    {
+        if (element.empty() || element[1] == -1) 
+        {
+            cout << "Tree is empty" << endl;
+            return;
+        }
+        cout<<"\n\t In-Order : ";
+        InOrderTraverse(1);
+        cout<<endl;
+    }
+
+    void postOrder()
+    {
+        if (element.empty() || element[1] == -1) 
+        {
+            cout << "Tree is empty" << endl;
+            return;
+        }
+        cout<<"\n\t Post-Order : ";
+        PostOrderTraverse(1);
+        cout<<endl;
+    }
+
+    void InsertElementInBinaryTree()
+    {
+        int key;
+        cout<<"\nEnter that node value which are parent of new node : ";
+        cin>>key;
+        int i= SearchSEQ(1,key);
+
+        if(i==0)
+        {
+            cout<<"Search is unsuccessful : No insertion";
+            return;
+        }
+
+        if(2 * i + 1 >= element.size()) {
+            element.resize(2 * i + 2, -1);
+        }
+
+        if(element[2*i]==-1 || element[2*i+1]==-1)
+        {
+            char option;
+            int val;
+
+            cout<<"Where you want to insert : Left sub tree (L), Right sub tree (R) : ";
+            cin>>option;
+
+            if(option=='L' || option=='l')
+            {
+                if(element[2*i]==-1)
+                {
+                    cout<<"Please Enter the value of item : ";
+                    cin>>val;
+                    element[2*i]=val;
+                    cout<<"Insert Successful";
+                }
+                else{
+                    cout << "Insertion not possible (Left is full)";
+                }
+            }
+            else if(option=='R' || option=='r')
+            {
+                if(element[2*i+1]==-1)
+                {
+                    cout<<"Please Enter the value of item : ";
+                    cin>>val;
+                    element[2*i+1]=val;
+                    cout<<"Insert Successful";
+                }
+                else{
+                   cout << "Insertion not possible (Right is full)";
+                }
+            }
+        }
+        else{
+            cout<<"Item cannot be inserted as a left node";
+        }
+    }
+
+    void DeleteElementInBinaryTree()
+    {
+        int key;
+        cout<<"\nEnter that node value you want to delete : ";
+        cin>>key;
+        int i=SearchSEQ(1,key);
+
+        if(i==0){
+            cout<<"Node does not exits: No deletion";
+            return;
+        }
+
+        bool leftch=(2*i<element.size()) && (element[2*i]!=-1);
+        bool rightch=(2*i+1<element.size()) && (element[2*i+1]!=-1);
+
+        if(!leftch && !rightch)
+        {
+            cout<<"\n\t"<<element[i]<<" deleted successfully";
+            element[i]=-1;
+        }
+        else
+        {
+            cout<<"Error: Node has children. Cannot delete directly!";
+        }
+    }
+
+    void preOrderIterative()
+    {
+        if (element.empty() || element[1] == -1) 
+        {
+            cout << "Tree is empty" << endl;
+            return;
+        }
+        cout<<"\n\tPre-Order Iterative : ";
+        PreOrderIterative(1);
+        cout<<endl;
+    }
+};
+
+#endif
